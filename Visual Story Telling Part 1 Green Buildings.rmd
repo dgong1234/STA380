@@ -1,7 +1,6 @@
 # Visual story telling part 1: green buildings
 
 
-# Fit a regression, build interactions, changed off of 3rd variable, color the points to show 3rd variable
 ```{r}
 library(dplyr)
 library(ggplot2)
