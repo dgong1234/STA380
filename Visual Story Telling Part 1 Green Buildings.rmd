@@ -1,0 +1,104 @@
+# Visual story telling part 1: green buildings
+
+
+# Fit a regression, build interactions, changed off of 3rd variable, color the points to show 3rd variable
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+
+greenb = read.csv("data/greenbuildings.csv",header=T)
+```
+
+
+
+```{r}
+
+summary_table <- greenb %>%
+  group_by( green_rating) %>%
+  summarise(mean_rent = mean(Rent), med_rent = median(Rent), sd_rent = sd(Rent))
+
+print(summary_table)
+```
+
+
+```{r}
+greenb = greenb %>%
+  filter(leasing_rate >= 10)
+
+meanrent <- greenb %>%
+  group_by(green_rating) %>%
+  summarise(mean_rent = mean(Rent))
+
+ggplot(meanrent, aes(x = factor(green_rating, labels = c("No", "Yes")), y = mean_rent)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Rent between green ratings with leasing rate above 10 percent",
+       x = "Green Rating",
+       y = "Mean Rent") +
+  theme_minimal()
+
+```
+
+
+```{r}
+greenb = greenb %>%
+  filter(age < 5, renovated == 0)
+
+meanrent <- greenb %>%
+  group_by(green_rating) %>%
+  summarise(mean_rent = mean(Rent))
+
+ggplot(meanrent, aes(x = factor(green_rating, labels = c("No", "Yes")), y = mean_rent)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Rent between green ratings and with age below 5 and renovated 0 times",
+       x = "Green Rating",
+       y = "Mean Rent") +
+  theme_minimal()
+```
+
+```{r}
+greenb = greenb %>%
+  filter(stories > 14)
+
+meanrent = greenb %>%
+  group_by(green_rating) %>%
+  summarise(mean_rent = mean(Rent))
+
+ggplot(meanrent, aes(x = factor(green_rating, labels = c("No", "Yes")), y = mean_rent)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Mean Rent between green ratings and with more than 14 stories",
+       x = "Green Rating",
+       y = "Mean Rent") +
+  theme_minimal()
+```
+
+
+
+```{r}
+greenba = greenb %>%
+  filter(class_a == 1)
+
+meanrent = greenba %>%
+  group_by(green_rating) %>%
+  summarise(mean_rent = mean(Rent))
+
+ggplot(meanrent, aes(x = factor(green_rating, labels = c("No", "Yes")), y = mean_rent)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = sprintf("$%.2f", mean_rent), y = mean_rent), vjust = -0.5, color = "black") +  # Add value labels
+  labs(title = "Mean Rent between Green Ratings and with Class A",
+       x = "Green Rating",
+       y = "Mean Rent") +
+  theme_minimal() 
+
+```
+
+The first thing I did was filter for the buildings that had less than 10 percent leasing rate. Then I looked at buildings that were under the age of 5 and renovated 0 times, as they fit our criteria of the new building the most. I next looked at buildings that had more than 14 stories as our building had 15 stories. Then I filtered for buildings that were of each class, but I realized that all the buildings that fit the earlier criteria were all class_a, so our building was most likely class_a. I looked at the difference in rent between No green rating and Yes green rating and found that Yes green rating was 23.83 dollars per square foot to 38.79 dollars per square foot. This is much larger than the original assessment so I agree that we should build this building as a green one.
+
+
+
+
+
+
+
