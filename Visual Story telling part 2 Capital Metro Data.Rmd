@@ -1,0 +1,107 @@
+# Visual story telling part 2: Capital Metro data
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+```
+
+
+```{r}
+capm = read.csv("data/capmetro_UT.csv",header=T)
+
+```
+
+```{r}
+any_na_values <- any(is.na(capm))
+any_na_values
+
+```
+Check if any values are NA.
+
+
+```{r}
+avgrid = capm %>%
+  group_by(weekend,month) %>%
+  summarize(avg_b = mean(boarding))
+avgrid
+```
+
+
+```{r}
+ggplot(avgrid, aes(x = weekend, y = avg_b, fill = weekend)) + geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Mean Ridership on Weekdays vs. Weekends", x = "Is it a Weekend",y = "Mean Ridership")+
+  facet_wrap(~month, ncol = 3)
+```
+
+
+The first thing we look at is the average ridership on weekends vs average ridership on weekdays through each month. We do this by grouping by weekend or weekday as well as the month and then averaging the number of boardings for each. It seems that on average, the number of boarding on a weekday is around 60 while on a weekend it is around 14. This shows that much more people ride the bus on a weekday. You can see that the number of people riding throughout the different months is also the same.
+
+
+```{r}
+daily_r = capm %>%
+  group_by(date = as.Date(timestamp)) %>%
+  summarize(total_b = sum(boarding))
+
+
+ggplot(daily_r, aes(x = date, y = total_b)) + geom_line() + labs(title = "Daily Ridership Trend", x = "Date",  y = "Total Ridership") +
+  theme_minimal()
+
+```
+This graph shows the daily ridership by day. This does not filter Weekends which is why there is so many dips.
+
+
+```{r}
+capm_wd = capm %>%
+  filter(weekend == "weekday")
+
+
+daily_r_wd = capm_wd %>%
+  group_by(date = as.Date(timestamp)) %>%
+  summarize(total_b = sum(boarding))
+
+ggplot(daily_r_wd, aes(x = date, y = total_b)) + geom_line() + labs(title = "Daily Ridership Trend for Weekdays", x = "Date",  y = "Total Ridership") +
+  theme_minimal()
+```
+
+
+The boardings when shown only for weekdays seems to stay very consistent throughout the months with only one significant dip towards the end of November. This dip an easily be explained by Thanksgiving break, when all the students are on break and at home.
+
+```{r}
+capm$day_of_week <- factor(capm$day_of_week,
+                                             levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))
+
+
+ggplot(capm, aes(x = temperature, y = boarding)) +
+  geom_line(stat = "summary", fun = "mean", color = "red") +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
+  labs(title = "Mean Ridership by Day of the Week",
+       x = "Temperature",
+       y = "Mean Ridership") +
+  theme_minimal()+
+  facet_wrap(~day_of_week, ncol = 3)
+
+```
+
+
+
+
+This graph shows the relationship between the temperature and mean ridership faceted by day of the week. As you can see, on Thursday, Friday, Wednesday, Tuesday, the ridership goes up as temperature rises, while on Saturday, Sunday, Monday, the ridership stays the same.
+
+```{r}
+avg_r_dow = capm %>%
+  group_by(day_of_week, hour_of_day) %>%
+  summarize(avg_b = mean(boarding))
+
+ggplot(avg_r_dow, aes(x = (hour_of_day), y = avg_b)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ day_of_week, ncol = 3) +
+  labs(title = "Mean Ridership by Hour of the Day for Each Day of the Week",
+       x = "Hour of the Day",
+       y = "Mean Ridership") +
+  theme_minimal()
+```
+
+
+
+These graphs show the mean ridership by hour of the day for each of the days of the week. On weekdays it shows that average ridership is the highest at around hour 15,16, and 17 which makes sense as that is around 3-5 pm. This is when most students finish classes for the day and when they would ride the bus back home.
