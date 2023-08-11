@@ -1,0 +1,63 @@
+# Association rule mining
+
+```{r}
+library(dplyr)
+library(igraph)
+library(arules)  
+library(arulesViz)
+```
+
+
+```{r}
+groceries = read.csv("data/groceries.txt", header = FALSE)
+```
+
+```{r}
+groceries[groceries == ""] = NA
+baskets = lapply(1:nrow(groceries), function(row) {
+  basket = unlist(groceries[row, ])
+  basket = basket[!is.na(basket)]
+  basket
+})
+
+gtrans = as(baskets, "transactions")
+summary(gtrans)
+grocr = apriori(gtrans, 
+	parameter=list(support=.005, confidence=.1, maxlen=4))
+```
+
+```{r}
+inspect(subset(grocr, subset=lift > 3))
+#inspect(subset(grocr, subset=confidence > 0.3))
+
+```
+Some of the rules with a lift of over 3 are buying onions leads to buying root vegetables, buying beef leads to root vegetables, buying pip fruit leads to buying tropical fruit etc.
+
+```{r}
+plot(grocr, method = 'two-key plot')
+```
+As you can see, the points with most support are a couple with order 1 rule. The rules with order 2 or 3 have relatively low support and the confidence goes quite high for a couple of order 3 and 2 rules.
+
+```{r}
+top_support = head(sort(itemFrequency(gtrans, type = "absolute"), decreasing = TRUE), 10)
+top_support
+
+```
+```{r}
+barplot(top_support, main = "Top Items by Support", xlab = "Item", ylab = "Support")
+
+```
+As you can see, the top items by support are whole milk, rolls/buns, yogurt, root vegetables, and sausauge.
+
+```{r}
+grograph = associations2igraph(subset(grocr, lift>2, confidence > .3), associationsAsNodes = FALSE)
+igraph::write_graph(grograph, file='groc.graphml', format = "graphml")
+
+grograp <- read_graph("groc.graphml", format = "graphml")
+plot(grograp)
+E(grograp)$width = 2
+E(grograp)$color = "red"
+plot(grograp, layout = layout.fruchterman.reingold(grograp), vertex.size = 10, vertex.label.cex = 0.8,vertex.label.dist = 1.5,edge.arrow.size = 0.5)
+  
+```
+According to the association graph, some rules you can see are buying brown bread leads to buying pastries, beef and root vegetables are often bought together, whipped/sour cream leads to buying yogurt etc. The rules I chose are confidence of over .3 and lift of over 2. This means the items that occur twice as often as they would if they were bought by themselves. The confidence is how likely for the association would happen. I chose .3 as it elimnates alot of the very weak rules and still keeps a couple of rules that could be important.
