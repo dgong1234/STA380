@@ -1,7 +1,6 @@
 # Visual story telling part 1: green buildings
 
 
-# Fit a regression, build interactions, changed off of 3rd variable, color the points to show 3rd variable
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -60,7 +59,7 @@ ggplot(meanrent, aes(x = factor(green_rating, labels = c("No", "Yes")), y = mean
 
 ```{r}
 greenb = greenb %>%
-  filter(stories > 14)
+  filter(stories > 10)
 
 meanrent = greenb %>%
   group_by(green_rating) %>%
@@ -68,7 +67,7 @@ meanrent = greenb %>%
 
 ggplot(meanrent, aes(x = factor(green_rating, labels = c("No", "Yes")), y = mean_rent)) +
   geom_bar(stat = "identity") +
-  labs(title = "Mean Rent between green ratings and with more than 14 stories",
+  labs(title = "Mean Rent between green ratings and with more than 10 stories",
        x = "Green Rating",
        y = "Mean Rent") +
   theme_minimal()
@@ -94,8 +93,43 @@ ggplot(meanrent, aes(x = factor(green_rating, labels = c("No", "Yes")), y = mean
 
 ```
 
-The first thing I did was filter for the buildings that had less than 10 percent leasing rate. Then I looked at buildings that were under the age of 5 and renovated 0 times, as they fit our criteria of the new building the most. I next looked at buildings that had more than 14 stories as our building had 15 stories. Then I filtered for buildings that were of each class, but I realized that all the buildings that fit the earlier criteria were all class_a, so our building was most likely class_a. I looked at the difference in rent between No green rating and Yes green rating and found that Yes green rating was 23.83 dollars per square foot to 38.79 dollars per square foot. This is much larger than the original assessment so I agree that we should build this building as a green one.
 
+```{r}
+df = read.csv("data/greenbuildings.csv",header=T)
+plot = ggplot(df, aes(x = Gas_Costs, y = Rent)) +
+  geom_point() +
+  facet_wrap(~ green_rating, ncol = 2) +
+  labs(x = "Gas Costs", y = "Rent") +
+  theme_minimal() +
+  ggtitle("Scatterplot of Rent vs Gas Costs Faceted by Green Rating")
+
+# Display the plot
+print(plot)
+
+```
+
+```{r}
+plot = ggplot(df, aes(x = Electricity_Costs, y = Rent)) +
+  geom_point() +
+  facet_wrap(~ green_rating, ncol = 2) +
+  labs(x = "Gas Costs", y = "Rent") +
+  theme_minimal() +
+  ggtitle("Scatterplot of Rent vs Gas Costs Faceted by Green Rating")
+
+# Display the plot
+print(plot)
+```
+
+
+
+# The first thing I did was filter for the buildings that had less than 10 percent leasing rate. Then I looked at buildings that were under the age of 5 and renovated 0 times, as they fit our criteria of the new building the most. I next looked at buildings that had more than 10 stories as our building had 15 stories. Then I filtered for buildings that were of each class, but I realized that all the buildings that fit the earlier criteria were all class_a, so our building was most likely class_a. I looked at the difference in rent between No green rating and Yes green rating and found that Yes green rating was 33.34 dollars per square foot to 39.86 dollars per square foot. This is much larger than the original assessment so I agree that we should build this building as a green one. To make sure that the other variables that we can't predict such as gas costs and electricity costs, I created scatterplots between the gas costs and rent as well as electricity costs and rent and faceted by green rating. Looking at both scatter plots, it seems neither change that much between buildings with green ratings and those without.
+
+# Calculation:
+
+## 250000 * 6.54 = 1,630,000 dollars per year. 
+## 100,000,000 *.05 = 5,000,000
+## 5,000,000/ 1,630,000 = 3.06 years
+## The costs should be recuperated in 3.06 years.
 
 
 
