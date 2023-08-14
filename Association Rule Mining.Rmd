@@ -47,7 +47,7 @@ top_support
 barplot(top_support, main = "Top Items by Support", xlab = "Item", ylab = "Support")
 
 ```
-As you can see, the top items by support are whole milk, rolls/buns, yogurt, root vegetables, and sausauge.
+As you can see, the top items by support are whole milk, rolls/buns, yogurt, root vegetables, and sausage, which means they are the most bought items.
 
 ```{r}
 grograph = associations2igraph(subset(grocr, lift>2, confidence > .3), associationsAsNodes = FALSE)
@@ -60,4 +60,4 @@ E(grograp)$color = "red"
 plot(grograp, layout = layout.fruchterman.reingold(grograp), vertex.size = 10, vertex.label.cex = 0.8,vertex.label.dist = 1.5,edge.arrow.size = 0.5)
   
 ```
-According to the association graph, some rules you can see are buying brown bread leads to buying pastries, beef and root vegetables are often bought together, whipped/sour cream leads to buying yogurt etc. The rules I chose are confidence of over .3 and lift of over 2. This means the items that occur twice as often as they would if they were bought by themselves. The confidence is how likely for the association would happen. I chose .3 as it elimnates alot of the very weak rules and still keeps a couple of rules that could be important.
+According to the association graph, some rules you can see are buying brown bread leads to buying pastries, beef and root vegetables are often bought together, whipped/sour cream leads to buying yogurt etc. Most of the items that are found by the association rule mining seem to be linked with one another except for brown bread and pastries. If you look at the other rules, it is a bit strange as there are things that seem like it would go well with brown bread or pastries such as cream cheese, hamburger meat, etc, but they do not. The rules I chose are confidence of over .3 and lift of over 2. This means the items that occur twice as often as they would if they were bought by themselves. The confidence is how likely for the association would happen. I chose .3 as it eliminates a lot of the very weak rules and still keeps a couple of rules that could be important.
