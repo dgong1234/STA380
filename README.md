@@ -4,13 +4,21 @@ STA380 assignments
 
 
 Probability Practice has part a and b.
+
 Visual Story Telling Part 1 has the green building problem.
+
 Visual Story Telling Part 2 has the Capital Metro problem.
+
 Wrangling the Billboard top 100 has the Billboard problem.
+
 Clustering and Dimensionality has the Wine problem.
+
 Market Segmentation has the market problem.
+
 Reuters corpus has the Reuters problem.
+
 Association Rule mining has the rule mining problem.
+
 Image Classification has the Neural Net problem.
 
 
