@@ -4,6 +4,7 @@ STA380 assignments
 
 
 ## Probability Practice has part a and b.
+https://github.com/dgong1234/STA380/blob/28033d8e1f373bbbd62fcff2561507b785382475/Probability%20Practice.ipynb
 
 ## Visual Story Telling Part 1 has the green building problem.
 
