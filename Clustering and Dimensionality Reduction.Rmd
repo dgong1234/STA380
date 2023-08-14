@@ -1,0 +1,99 @@
+# Clustering and dimensionality reduction
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tsne)
+library(Rtsne)
+library(ClusterR) 
+library(foreach)
+library(mosaic)
+```
+
+
+
+
+```{r}
+wine = read.csv("data/wine.csv",header=T)
+```
+
+
+
+```{r}
+wine = unique(wine)
+print(nrow(wine))
+wine2 = wine[,1:11]
+pcw = prcomp(wine2, rank=2, scale = TRUE)
+pcw$rotation
+wines = pcw$x
+clust1 = kmeans(wines, centers = 2)
+qplot(wines[,1], wines[,2], color = wine$color,xlab='Component 1', ylab='Component 2')
+qplot(wines[,1], wines[,2], color = clust1$cluster,xlab='Component 1', ylab='Component 2')
+```
+
+I used PCA on the 11 columns of chemical properties. This placed them into 2 columns of characteristics. I plotted the x's and it shows a pretty large cluster. Then I categorized it by color and saw that the red wines are on the left and the white wines are on the right, which means PCA with Kmeans  does pretty well. The first graph shows the actual cluster and the second is the Kmeans cluster. The Kmeans cluster is off by a little bit as it places some of the whites in the middle as red, but overall it is pretty good.
+
+```{r}
+clust2 = kmeans(wines, centers = 10)
+qplot(wines[,1], wines[,2], color = wine$quality,xlab='Component 1', ylab='Component 2')
+qplot(wines[,1], wines[,2], color = clust2$cluster,xlab='Component 1', ylab='Component 2')
+```
+The PCA with Kmeans does not seem to do a good job of separating the wine qualities as they are all mixed together. This makes sense as the original cluster is already mixed, which makes it very hard to distinguish.
+
+
+```{r}
+wine2 = unique(wine2)
+tsnew = Rtsne(wine2, perplexity = 30, theta = 0.5, max_iter = 1000, scale = TRUE)
+tsnew
+
+
+tsne_df = data.frame(
+  x = tsnew$Y[,1],
+  y = tsnew$Y[,2]
+)
+tsne_df
+wine_sub = wine[1:5318, ]
+clust3 = kmeans(tsne_df, centers = 2)
+qplot(tsne_df$x,tsne_df$y, color = wine_sub$color,
+      xlab = 'Component 1', ylab = 'Component 2')
+qplot(tsne_df$x,tsne_df$y, color = clust3$cluster,
+      xlab = 'Component 1', ylab = 'Component 2')
+
+```
+The TSNE with Kmeans seems to do an okay job, but it places the top ones as white and the bottom as red. In the original clustering it shows that red is on left and white is on the right, which the TSNE manages to capture some of. 
+
+```{r}
+clust4 = kmeans(tsne_df, centers = 10)
+qplot(tsne_df$x,tsne_df$y, color = clust4$cluster,
+      xlab = 'Component 1', ylab = 'Component 2')
+qplot(tsne_df$x,tsne_df$y, color = wine_sub$quality,
+      xlab = 'Component 1', ylab = 'Component 2')
+```
+
+
+Again, the quality does not seem to be distinguishable as they are mixed together.
+
+
+```{r}
+wine3 = read.csv("data/wine.csv",header=T)
+wine3 = unique(wine3)
+wine3 = wine3[,1:11]
+```
+
+```{r}
+wine3s = scale(wine3, center=TRUE, scale=TRUE) 
+
+# Form a pairwise distance matrix using the dist function
+winemat = dist(wine3s, method='euclidean')
+
+
+# Now run hierarchical clustering
+hwine = hclust(winemat, method='average')
+
+
+# Plot the dendrogram
+plot(hwine, cex=0.8)
+```
+
+
+I tried testing a hierarchical cluster on this as well for fun, but it seems to not be able to show any results.
+
