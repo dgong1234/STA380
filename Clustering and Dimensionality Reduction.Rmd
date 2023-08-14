@@ -96,4 +96,5 @@ plot(hwine, cex=0.8)
 
 
 I tried testing a hierarchical cluster on this as well for fun, but it seems to not be able to show any results.
+Overall, the best approach seems to be using PCA to reduce the dimensions, and then use K means clustering to distinguish the reds from the whites. Although it is not 100 percent accurate, the accuracy is still pretty good. None of the approaches are able to distinguish different qualities however, but this makes sense as in the data set, the quality of the wines are all mixed together, which makes it very hard for clustering to distinguish. 
 
